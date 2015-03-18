@@ -21,6 +21,14 @@ RemoteStorageDoc.asStore =
         console.log "SET CALLED", u, key, buf
         RemoteStorageDoc.byKey key, (err, doc) ->
             return cb err if err
+
+            # SET undefined === DELETE
+            if not buf?
+                if not doc?
+                    console.error 'Document to delete not found!'
+                    return cb 'Document not found'
+                return doc.destroy cb
+
             value = buf.toString('utf8')
             console.log "SET", key, value
             if doc
