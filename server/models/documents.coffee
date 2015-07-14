@@ -7,13 +7,19 @@ module.exports = RemoteStorageDoc = americano.getModel 'RemoteStorageDoc',
 
 RemoteStorageDoc.byKey = (key, callback) ->
     RemoteStorageDoc.request 'byKey', {key}, (err, docs) ->
+        if err? then console.log "byKey error: ", err
+        if not docs?
+            console.log "byKey: doc not found"
+        else
+            console.log "byKey: number of docs:", docs.length
         callback err, docs?[0]
 
 
 RemoteStorageDoc.asStore =
     get: (u, key, cb) ->
-        console.log "GET CALLED"
+        console.log "GET CALLED", u, key
         RemoteStorageDoc.byKey key, (err, doc) ->
+            if err? then console.log "GET-error: ", err
             console.log "GET", doc
             value = if doc then new Buffer(doc.value.trim(), 'utf8') else undefined
             cb err, value
